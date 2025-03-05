@@ -11,60 +11,51 @@
 # **************************************************************************** #
 
 NAME = philo
-NAME_BONUS = philo_bonus
 
 CC = cc
 LIB = ar rcs
 RM = rm -rf
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address,undefined,leak -g3
+CFLAGS = -Wall -Wextra -Werror -g3
 
-HEADER = include/pipex.h
-HEADER_BONUS = include/pipex_bonus.h
+HEADER = include/philo.h
 
 SRC_DIR = src
-SRC_DIR_BONUS = src_bonus
-SRCS = $(SRC_DIR)/philo.c
-SRCS_BONUS = $(SRC_DIR_BONUS)/pipex_bonus.c $(SRC_DIR_BONUS)/utils_bonus.c
+SRCS = $(SRC_DIR)/philo.c $(SRC_DIR)/utils.c $(SRC_DIR)/init.c \
+		$(SRC_DIR)/simulation.c $(SRC_DIR)/checks.c
 
 OBJ_DIR = obj
-OBJ_DIR_BONUS = obj_bonus
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJS_BONUS = $(SRCS_BONUS:$(SRC_DIR_BONUS)/%.c=$(OBJ_DIR_BONUS)/%.o)
 
 RED         = \033[91;1m
 GREEN       = \033[92;1m
 CLEAR_COLOR = \033[0m
 
+BANNER = "$(GREEN)         __   _ __                           _ __       __"\
+"   ___  / /  (_) /__    _______  __ _  ___  (_) /__ ___/ /"\
+"  / _ \/ _ \/ / / _ \  / __/ _ \/  ' \/ _ \/ / / -_) _  /"\
+" / .__/_//_/_/_/\___/  \__/\___/_/_/_/ .__/_/_/\__/\_,_/"\
+"/_/                                 /_/$(CLEAR_COLOR)\n"
+
 all: $(NAME)
 
-bonus: $(NAME_BONUS)
-
-
 $(NAME): $(OBJS)
+	@echo ""
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
-	@echo "$(GREEN)$(NAME) compiled! ;)$(CLEAR_COLOR)\n"
-
-$(NAME_BONUS): $(OBJS_BONUS)
-	$(CC) $(CFLAGS) $(OBJS_BONUS) -o $(NAME_BONUS)
-	@echo "$(GREEN)$(NAME_BONUS) compiled! ;)$(CLEAR_COLOR)\n"
+	@printf "%b\n" $(BANNER)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADER)
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -Iinclude -c $< -o $@
-
-$(OBJ_DIR_BONUS)/%.o: $(SRC_DIR_BONUS)/%.c $(HEADER_BONUS)
-	@mkdir -p $(OBJ_DIR_BONUS)
-	$(CC) $(CFLAGS) -Iinclude -c $< -o $@
-
+	@$(CC) $(CFLAGS) -Iinclude -c $< -o $@
+	@echo -n "\rCompiling $<"
 
 clean:
-	$(RM) $(OBJ_DIR) $(OBJ_DIR_BONUS)
+	$(RM) $(OBJ_DIR)
 	@echo "$(RED)Object files removed!$(CLEAR_COLOR)\n"
 
 fclean: clean
-	$(RM) $(NAME) $(NAME_BONUS)
+	$(RM) $(NAME)
 	@echo "$(RED)All files removed!$(CLEAR_COLOR)\n"
 
 re: fclean all
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re
