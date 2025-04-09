@@ -19,7 +19,6 @@ void	init_args(t_core *core, int argc, char **argv)
 	core->times.time_eat = ft_atoi(argv[3]);
 	core->times.time_sleep = ft_atoi(argv[4]);
 	core->times.num_times_eat = -1;
-	core->times.end = 0;
 	if (argc == 6)
 		core->times.num_times_eat = ft_atoi(argv[5]);
 }

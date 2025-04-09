@@ -25,7 +25,6 @@ typedef struct s_times
 	int		time_eat;
 	int		time_sleep;
 	int		num_times_eat;
-	char	end;
 }	t_times;
 
 typedef struct s_mtx
@@ -64,7 +63,7 @@ int				clean_core(t_core *core, int limit);
 int				free_memory(t_core *core);
 unsigned long	get_time(void);
 void			ft_usleep(unsigned long time);
-int			print_status(t_philo *philo, char *status);
+void			print_status(t_philo *philo, char *status);
 int				check_args(int argc, char **argv);
 
 #endif

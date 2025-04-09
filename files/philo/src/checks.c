@@ -28,6 +28,8 @@ size_t	ft_strlen(const char *s)
 {
 	size_t	i;
 
+	while (*s && *s == '0')
+		s++;
 	i = 0;
 	while (s[i])
 		i++;
@@ -49,7 +51,7 @@ int	is_correct_arg(char *argv, int i)
 	{
 		if (!ft_isdigit(argv[j]))
 		{
-			printf("Error: Argument '%d' is not a positive number\n", i);
+			printf("Error: Argument '%d' is not a positive number\n\n", i);
 			return (0);
 		}
 		j++;
@@ -57,12 +59,12 @@ int	is_correct_arg(char *argv, int i)
 	len = ft_strlen(argv);
 	if (len > 10 || (len == 10 && ft_strncmp(argv, "2147483647", 10) > 0))
 	{
-		printf("Error: Argument '%d' is too long\n", i);
+		printf("Error: Argument '%d' is too long\n\n", i);
 		return (0);
 	}
-	if (len == 1 && argv[0] == '0')
+	if (len == 0)
 	{
-		printf("Error: Argument '%d' is 0\n", i);
+		printf("Error: Argument '%d' is 0\n\n", i);
 		return (0);
 	}
 	return (1);
@@ -74,7 +76,10 @@ int	check_args(int argc, char **argv)
 
 	if (argc != 5 && argc != 6)
 	{
-		printf("Error: Wrong number of arguments\n");
+		printf(
+			"Note:\tThe first 4 arguments are mandatory.\n"
+			"\tExecute the program with 4 or 5 arguments.\n\n"
+			);
 		return (0);
 	}
 	i = 1;

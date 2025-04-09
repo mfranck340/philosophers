@@ -12,16 +12,13 @@
 
 #include "../include/philo.h"
 
-int	do_routine(t_philo *philo)
+void	do_routine(t_philo *philo)
 {
 	pthread_mutex_lock(philo->locks.left_fork);
-	if (!print_status(philo, "has taken a fork"))
-		return (0);
+	print_status(philo, "has taken a fork");
 	pthread_mutex_lock(philo->locks.right_fork);
-	if (print_status(philo, "has taken a fork"))
-		return (0);
-	if (print_status(philo, "is eating"))
-		return (0);
+	print_status(philo, "has taken a fork");
+	print_status(philo, "is eating");
 	pthread_mutex_lock(philo->locks.lock_eat);
 	philo->last_eat = get_time();
 	philo->num_eat++;
@@ -29,12 +26,9 @@ int	do_routine(t_philo *philo)
 	ft_usleep(philo->times->time_eat);
 	pthread_mutex_unlock(philo->locks.left_fork);
 	pthread_mutex_unlock(philo->locks.right_fork);
-	if (print_status(philo, "is sleeping"))
-		return (0);
+	print_status(philo, "is sleeping");
 	ft_usleep(philo->times->time_sleep);
-	if (print_status(philo, "is thinking"))
-		return (0);
-	return (1);
+	print_status(philo, "is thinking");
 }
 
 void	*start_routine(void *data)
@@ -49,8 +43,7 @@ void	*start_routine(void *data)
 	philo->last_eat = get_time();
 	pthread_mutex_unlock(philo->locks.lock_eat);
 	while (1)
-		if (!do_routine(philo))
-			break;
+		do_routine(philo);
 	return (0);
 }
 
@@ -73,7 +66,6 @@ int	all_eat(t_core *core)
 	if (count == core->num_philo)
 	{
 		pthread_mutex_lock(core->philos[0].locks.lock_write);
-		core->times.end = 1;
 		return (1);
 	}
 	return (0);
@@ -81,8 +73,8 @@ int	all_eat(t_core *core)
 
 void	*start_monitor(void *data)
 {
-	t_core	*core;
 	int		i;
+	t_core	*core;
 
 	core = (t_core *)data;
 	while (1)
@@ -96,17 +88,15 @@ void	*start_monitor(void *data)
 			{
 				pthread_mutex_unlock(core->philos[i].locks.lock_eat);
 				pthread_mutex_lock(core->philos[i].locks.lock_write);
-				printf("%lu %d died\n", get_time() - core->philos[i].start_time,
+				printf("[%lu]\t%d died\n", get_time() - core->philos[i].start_time,
 					core->philos[i].id);
-				core->times.end = 1;
-				break;
+				return (0);
 			}
 			pthread_mutex_unlock(core->philos[i].locks.lock_eat);
 		}
 		if (all_eat(core))
-			break;
+			return (0);
 	}
-	return (0);
 }
 
 void	start_meal(t_core *core)
@@ -122,6 +112,7 @@ void	start_meal(t_core *core)
 		if (pthread_create(&core->philos[i].thread_id, NULL, &start_routine,
 				&core->philos[i]) != 0)
 			return ;
+		usleep(1);
 	}
 	if (pthread_join(thread_id, NULL) != 0)
 		return ;

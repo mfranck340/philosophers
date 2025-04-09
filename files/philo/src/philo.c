@@ -14,11 +14,13 @@
 
 int	ft_error_usage(void)
 {
-	printf("Usage: ./philo\t<number_of_philosophers>[INT]\n");
-	printf("\t\t<time_to_die>[INT]\n");
-	printf("\t\t<time_to_eat>[INT]\n");
-	printf("\t\t<time_to_sleep>[INT]\n");
-	printf("\t\t<OPTIONAL number_of_times_each_philosopher_must_eat>[INT]\n");
+	printf(
+		"Usage: ./philo\t[INT] <number_of_philosophers>\n"
+		"\t\t[INT] <time_to_die>\n"
+		"\t\t[INT] <time_to_eat>\n"
+		"\t\t[INT] <time_to_sleep>\n"
+		"\t\t[INT] (OPTIONAL) <times_each_philosopher_must_eat>\n"
+		);
 	return (1);
 }
 

@@ -60,18 +60,12 @@ void	ft_usleep(unsigned long time)
 	}
 }
 
-int	print_status(t_philo *philo, char *status)
+void	print_status(t_philo *philo, char *status)
 {
 	unsigned long	time;
 
 	pthread_mutex_lock(philo->locks.lock_write);
-	if (philo->times->end)
-	{
-		pthread_mutex_unlock(philo->locks.lock_write);
-		return (0);
-	}
 	time = get_time() - philo->start_time;
-	printf("%lu %d %s\n", time, philo->id, status);
+	printf("[%lu]\t%d %s\n", time, philo->id, status);
 	pthread_mutex_unlock(philo->locks.lock_write);
-	return (1);
 }
