@@ -10,18 +10,19 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = philo
+NAME = philo_bonus
 
 CC = cc
 LIB = ar rcs
 RM = rm -rf
 CFLAGS = -Wall -Wextra -Werror -g3
 
-HEADER = include/philo.h
+HEADER = include/philo_bonus.h
 
 SRC_DIR = src
-SRCS = $(SRC_DIR)/philo.c $(SRC_DIR)/utils.c $(SRC_DIR)/init.c \
-		$(SRC_DIR)/simulation.c $(SRC_DIR)/checks.c
+SRCS = $(SRC_DIR)/philo_bonus.c \
+		$(SRC_DIR)/checks.c \
+		$(SRC_DIR)/init.c 
 
 OBJ_DIR = obj
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
@@ -31,12 +32,12 @@ GREEN       = \033[92;1m
 CLEAR_COLOR = \033[0m
 
 BANNER = "$(GREEN)"\
-"          ______  _     _ _       "\
-" _  _    (_____ \| |   (_) |      "\
-"( \( \    _____) ) | _  _| | ___  "\
-" ) )) )  |  ____/| || \| | |/ _ \ "\
-"(_/(_/   | |     | | | | | | |_| |"\
-"         |_|     |_| |_|_|_|\___/ "\
+"          ______  _     _ _       ______                         "\
+" _  _    (_____ \| |   (_) |     (____  \                        "\
+"( \( \    _____) ) | _  _| | ___  ____)  ) ___  ____  _   _  ___ "\
+" ) )) )  |  ____/| || \| | |/ _ \|  __  ( / _ \|  _ \| | | |/___)"\
+"(_/(_/   | |     | | | | | | |_| | |__)  ) |_| | | | | |_| |___ |"\
+"         |_|     |_| |_|_|_|\___/|______/ \___/|_| |_|\____(___/ "\
 "$(CLEAR_COLOR)"
 
 all: $(NAME)
