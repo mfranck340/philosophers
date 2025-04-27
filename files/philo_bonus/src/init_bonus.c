@@ -1,21 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   init_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ffierro- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 00:34:45 by ffierro-          #+#    #+#             */
-/*   Updated: 2025/02/09 00:34:47 by ffierro-         ###   ########.fr       */
+/*   Updated: 2025/04/27 18:56:50 by ffierro-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philo.h"
+#include "../include/philo_bonus.h"
 
-void	init_args(t_core *core, int argc, char **argv)
+static void	init_args(t_core *core, int argc, char **argv)
 {
 	core->end = 0;
 	core->num_philo = ft_atoi(argv[1]);
+	core->start_time = get_time();
 	core->times.time_die = ft_atoi(argv[2]);
 	core->times.time_eat = ft_atoi(argv[3]);
 	core->times.time_sleep = ft_atoi(argv[4]);
@@ -24,7 +25,7 @@ void	init_args(t_core *core, int argc, char **argv)
 		core->times.num_times_eat = ft_atoi(argv[5]);
 }
 
-int	allocate_memory(t_core *core)
+static int	allocate_memory(t_core *core)
 {
 	core->philos = (t_philo *)malloc(sizeof(t_philo) * core->num_philo);
 	if (!core->philos)
@@ -32,73 +33,42 @@ int	allocate_memory(t_core *core)
 	core->pid = (pid_t *)malloc(sizeof(pid_t) * core->num_philo);
 	if (!core->pid)
 	{
-		free(core->philos);
+		free_mem_core(core);
 		return (0);
 	}
 	return (1);
 }
 
-int	init_semaphores(t_core *core)
+static int	init_semaphores(t_core *core)
 {
-	core->semaphores.sem_forks = sem_open(SEM_FORKS, O_CREAT | O_EXCL,
-		0644, core->num_philo);
+	core->semaphores.sem_forks = sem_open(SEM_FORKS, O_CREAT,
+			0644, core->num_philo);
 	if (core->semaphores.sem_forks == SEM_FAILED)
 	{
-		free(core->philos);
-		free(core->pid);
+		perror("sem_open");
+		free_mem_core(core);
 		return (0);
 	}
-	core->semaphores.sem_write = sem_open(SEM_WRITE, O_CREAT | O_EXCL,
+	core->semaphores.sem_write = sem_open(SEM_WRITE, O_CREAT,
 			0644, 1);
 	if (core->semaphores.sem_write == SEM_FAILED)
 	{
-		sem_close(core->semaphores.sem_forks);
-		free(core->philos);
-		free(core->pid);
+		clear_semaphore(core, 1);
+		free_mem_core(core);
 		return (0);
 	}
-}
-
-int	get_size_int(int n)
-{
-	int		i;
-
-	i = 0;
-	while (n >= 0)
+	core->semaphores.sem_dead = sem_open(SEM_DEAD, O_CREAT,
+			0644, 0);
+	if (core->semaphores.sem_dead == SEM_FAILED)
 	{
-		n /= 10;
-		i++;
-	}
-	return (i);
-}
-
-char	*get_sem_name(int id)
-{
-	char	*name;
-	char	*id_str;
-	int		i;
-
-
-	name = (char *)malloc(sizeof(char) * (SIZE_SEM_EAT + get_size_int(id) + 1));
-	if (!name)
-		return (0);
-	i = 0;
-	while (i < SIZE_SEM_EAT)
-	{
-		name[i] = SEM_EAT[i];
-		i++;
-	}
-	id_str = ft_itoa(id);
-	if (!id_str)
-	{
-		free(name);
+		clear_semaphore(core, 1);
+		free_mem_core(core);
 		return (0);
 	}
-	
-	
+	return (1);
 }
 
-int	create_philos(t_core *core)
+static int	create_philos(t_core *core)
 {
 	int	i;
 
@@ -107,30 +77,29 @@ int	create_philos(t_core *core)
 	{
 		core->philos[i].id = i + 1;
 		core->philos[i].num_eat = 0;
-		core->philos[i].start_time = get_time();
 		core->philos[i].last_eat = get_time();
 		core->philos[i].name_sem = get_sem_name(i + 1);
-		core->philos[i].sem_eat = sem_open(SEM_EAT, O_CREAT | O_EXCL,
-				0644, 1);
+		if (!core->philos[i].name_sem)
+			return (clear_memory(core, i, 1), 0);
+		sem_unlink(core->philos[i].name_sem);
+		core->philos[i].sem_eat = sem_open(core->philos[i].name_sem,
+				O_CREAT, 0644, 1);
 		if (core->philos[i].sem_eat == SEM_FAILED)
 		{
-			while (--i >= 0)
-			{
-				sem_close(core->philos[i].sem_eat);
-				free(core->philos[i].sem_eat);
-			}
-			sem_close(core->semaphores.sem_write);
-			sem_close(core->semaphores.sem_forks);
-			free(core->philos);
-			free(core->pid);
+			free(core->philos[i].name_sem);
+			clear_memory(core, i, 1);
 			return (0);
 		}
+		core->philos[i].core = core;
 	}
 	return (1);
 }
 
 int	init_core(t_core *core, int argc, char **argv)
 {
+	sem_unlink(SEM_FORKS);
+	sem_unlink(SEM_WRITE);
+	sem_unlink(SEM_DEAD);
 	init_args(core, argc, argv);
 	if (!allocate_memory(core))
 		return (0);

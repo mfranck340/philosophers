@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   philo_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ffierro- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 00:26:20 by ffierro-          #+#    #+#             */
-/*   Updated: 2025/02/09 00:26:22 by ffierro-         ###   ########.fr       */
+/*   Updated: 2025/04/27 18:57:03 by ffierro-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,7 @@ int	main(int argc, char **argv)
 		return (ft_error_usage());
 	if (!init_core(&core, argc, argv))
 		return (1);
+	start_meal(&core);
+	clear_memory(&core, core.num_philo, 1);
 	return (0);
 }

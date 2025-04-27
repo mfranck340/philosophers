@@ -1,0 +1,18 @@
+==4140== Memcheck, a memory error detector
+==4140== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==4140== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==4140== Command: ./philo_bonus 200 800 200 200 7
+==4140== Parent PID: 3109
+==4140== 
+==4140== Thread 2:
+==4140== Syscall param kill(pid) contains uninitialised byte(s)
+==4140==    at 0x48A575B: kill (syscall-template.S:120)
+==4140==    by 0x10A42E: start_monitor (simulation.c:13)
+==4140==    by 0x48F7AC2: start_thread (pthread_create.c:442)
+==4140==    by 0x4988A03: clone (clone.S:100)
+==4140==  Uninitialised value was created by a heap allocation
+==4140==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4140==    by 0x109A3C: allocate_memory (init.c:87)
+==4140==    by 0x109E6E: init_core (init.c:159)
+==4140==    by 0x109419: main (philo_bonus.c:33)
+==4140== 

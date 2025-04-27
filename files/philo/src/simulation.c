@@ -96,6 +96,7 @@ void	*start_monitor(void *data)
 		}
 		if (all_eat(core))
 			return (0);
+		usleep(5);
 	}
 }
 

@@ -21,8 +21,13 @@ HEADER = include/philo_bonus.h
 
 SRC_DIR = src
 SRCS = $(SRC_DIR)/philo_bonus.c \
-		$(SRC_DIR)/checks.c \
-		$(SRC_DIR)/init.c 
+		$(SRC_DIR)/philo_routine_bonus.c \
+		$(SRC_DIR)/checks_bonus.c \
+		$(SRC_DIR)/init_bonus.c \
+		$(SRC_DIR)/clear_bonus.c \
+		$(SRC_DIR)/utils_bonus.c \
+		$(SRC_DIR)/utils_str_bonus.c \
+		$(SRC_DIR)/simulation_bonus.c 
 
 OBJ_DIR = obj
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
